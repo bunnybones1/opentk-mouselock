@@ -1,5 +1,6 @@
 ﻿using System;
 using OpenTK;
+using OpenTK.Input;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 
@@ -15,7 +16,7 @@ namespace ImmediateMode
     /// </summary>
     sealed class Program : GameWindow
     {
-        const float rotation_speed = 180.0f;
+        const float rotation_speed = 0.1f;
         float angle;
 
         protected override void OnLoad(EventArgs e)
@@ -51,6 +52,21 @@ namespace ImmediateMode
             }
         }
 
+        protected override void OnMouseMove(MouseMoveEventArgs e)
+        {
+            base.OnMouseMove(e);
+            angle += rotation_speed * (float)e.X;
+        }
+
+        protected override void OnMouseDown(MouseButtonEventArgs e)
+        {
+            base.OnMouseDown(e);
+            if (e.Mouse.IsButtonDown(MouseButton.Left))
+            {
+                angle += 2.0f;
+            }
+        }
+
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
@@ -61,7 +77,6 @@ namespace ImmediateMode
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadMatrix(ref lookat);
 
-            angle += rotation_speed * (float)e.Time;
             GL.Rotate(angle, 0.0f, 1.0f, 0.0f);
             GL.Begin(PrimitiveType.Quads);
 
