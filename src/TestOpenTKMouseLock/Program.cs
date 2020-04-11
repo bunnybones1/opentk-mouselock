@@ -16,8 +16,9 @@ namespace ImmediateMode
     /// </summary>
     sealed class Program : GameWindow
     {
-        const float rotation_speed = 0.1f;
-        float angle;
+        const float rotation_speed = 0.3f;
+        float angleX;
+        float angleY;
 
         protected override void OnLoad(EventArgs e)
         {
@@ -55,16 +56,8 @@ namespace ImmediateMode
         protected override void OnMouseMove(MouseMoveEventArgs e)
         {
             base.OnMouseMove(e);
-            angle += rotation_speed * (float)e.X;
-        }
-
-        protected override void OnMouseDown(MouseButtonEventArgs e)
-        {
-            base.OnMouseDown(e);
-            if (e.Mouse.IsButtonDown(MouseButton.Left))
-            {
-                angle += 2.0f;
-            }
+            angleX += rotation_speed * (float)e.YDelta;
+            angleY += rotation_speed * (float)e.XDelta;
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
@@ -77,7 +70,8 @@ namespace ImmediateMode
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadMatrix(ref lookat);
 
-            GL.Rotate(angle, 0.0f, 1.0f, 0.0f);
+            GL.Rotate(angleX, 1.0f, 0.0f, 0.0f);
+            GL.Rotate(-angleY, 0.0f, 1.0f, 0.0f);
             GL.Begin(PrimitiveType.Quads);
 
             GL.Color3(Color4.Silver.R, Color4.Silver.G, Color4.Silver.B);
