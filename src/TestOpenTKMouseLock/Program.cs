@@ -51,7 +51,8 @@ namespace ImmediateMode
             var keyboard = OpenTK.Input.Keyboard.GetState();
             if (keyboard[OpenTK.Input.Key.Escape])
             {
-                Exit();
+                CursorGrabbed = false;
+                CursorVisible = true;
                 return;
             }
 
@@ -89,8 +90,11 @@ namespace ImmediateMode
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
             base.OnMouseDown(e);
-            CursorGrabbed = !CursorGrabbed;
-            CursorVisible = !CursorVisible;
+            if(e.X > 0.0f && e.X < Width && e.Y > 0.0f && e.Y < Height)
+            {
+                CursorGrabbed = !CursorGrabbed;
+                CursorVisible = !CursorVisible;
+            }
         }
 
 
