@@ -60,6 +60,13 @@ namespace ImmediateMode
             angleY += rotation_speed * (float)e.XDelta;
         }
 
+        protected override void OnMouseDown(MouseButtonEventArgs e)
+        {
+            base.OnMouseDown(e);
+            CursorGrabbed = !CursorGrabbed;
+            CursorVisible = !CursorVisible;
+        }
+
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
