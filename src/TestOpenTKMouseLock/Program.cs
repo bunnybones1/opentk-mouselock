@@ -20,6 +20,9 @@ namespace ImmediateMode
         float angleX;
         float angleY;
 
+        bool UseVintageStoryMouseGrabbing = false;
+
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -51,14 +54,37 @@ namespace ImmediateMode
                 Exit();
                 return;
             }
+
+            if (UseVintageStoryMouseGrabbing)
+            {
+                UpdateMousePosition();
+            }
         }
 
         protected override void OnMouseMove(MouseMoveEventArgs e)
         {
             base.OnMouseMove(e);
-            angleX += rotation_speed * (float)e.YDelta;
-            angleY += rotation_speed * (float)e.XDelta;
+
+            if (UseVintageStoryMouseGrabbing)
+            {
+                if (ignoreMouseMoveEvent)
+                {
+                    ignoreMouseMoveEvent = false;
+                    return;
+                }
+
+                // Only way to get actual mouse coordinates?!
+                mouseX = e.X;
+                mouseY = e.Y;
+
+            }
+            else
+            {
+                angleX += rotation_speed * (float)e.YDelta;
+                angleY += rotation_speed * (float)e.XDelta;
+            }
         }
+
 
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
@@ -66,6 +92,47 @@ namespace ImmediateMode
             CursorGrabbed = !CursorGrabbed;
             CursorVisible = !CursorVisible;
         }
+
+
+
+
+        OpenTK.Input.MouseState currentMouseState, previousMouseState;
+        int mouseX, mouseY;
+        bool ignoreMouseMoveEvent = false;
+
+        void UpdateMousePosition()
+        {
+            currentMouseState = Mouse.GetState();
+
+            if (!Focused)
+            {
+                return;
+            }
+
+            if (currentMouseState != previousMouseState)
+            {
+                int xdelta = currentMouseState.X - previousMouseState.X;
+                int ydelta = currentMouseState.Y - previousMouseState.Y;
+                previousMouseState = currentMouseState;
+
+                angleX += rotation_speed * (float)ydelta;
+                angleY += rotation_speed * (float)xdelta;
+
+
+                if (CursorGrabbed)
+                {
+                    int centerx = this.Bounds.Left + (Bounds.Width / 2);
+                    int centery = Bounds.Top + (Bounds.Height / 2);
+                    ignoreMouseMoveEvent = true;
+                    Mouse.SetPosition(centerx, centery);
+                }
+            }
+        }
+
+
+
+
+
 
         protected override void OnRenderFrame(FrameEventArgs e)
         {
